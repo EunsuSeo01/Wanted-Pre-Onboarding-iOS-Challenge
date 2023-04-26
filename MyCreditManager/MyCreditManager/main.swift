@@ -9,8 +9,19 @@ import Foundation
 
 // MARK: - Properties
 
-// 추가된 학생들의 이름
-var namesOfStudents: [String] = []
+struct Student {
+    var name: String
+    var subjects: [Subject]
+    var GPA: Double
+}
+
+struct Subject {
+    var name: String
+    var grade: String
+}
+
+// 추가된 학생들 리스트
+var students: [Student] = []
 
 // MARK: - Main
 
@@ -47,19 +58,22 @@ while true {
 // 1: 학생추가
 public func addStudent() {
     print("추가할 학생의 이름을 입력해주세요")
-    let nameOfStudent = readLine()!
+    let inputName = readLine()!
     // 잘못된 입력 처리
-    if nameOfStudent.isEmpty {
+    if inputName.isEmpty {
         print("입력이 잘못되었습니다. 다시 확인해주세요.")
-    }
-    // 중복일 경우
-    else if namesOfStudents.contains(nameOfStudent) {
-        print("\(nameOfStudent)은(는) 이미 존재하는 학생입니다. 추가하지 않습니다.")
-    }
-    // 새 학생일 경우 추가
-    else {
-        namesOfStudents.append(nameOfStudent)
-        print("\(nameOfStudent) 학생을 추가했습니다.")
+    } else {
+        let inputStudent = Student(name: inputName, subjects: [], GPA: 0)
+        
+        // 이미 존재하는 학생인 경우
+        if !(students.filter({ $0.name == inputName }).isEmpty) {
+            print("\(inputName)은(는) 이미 존재하는 학생입니다. 추가하지 않습니다.")
+        }
+        // 새 학생일 경우 추가
+        else {
+            students.append(inputStudent)
+            print("\(inputName) 학생을 추가했습니다.")
+        }
     }
 }
 
@@ -67,28 +81,26 @@ public func addStudent() {
 public func removeStudent() {
     print("삭제할 학생의 이름을 입력해주세요")
     let inputName = readLine()!
+    
     // 잘못된 입력 처리
     if inputName.isEmpty {
         print("입력이 잘못되었습니다. 다시 확인해주세요.")
-    }
-    
-    // 이름 목록이 비어있으면 바로 종료
-    if namesOfStudents.count == 0 {
-        print("\(inputName) 학생을 찾지 못했습니다.")
     } else {
-        var index = 0
-        for nameOfStudent in namesOfStudents {
-            // 이름 목록에 있으면 해당 학생 삭제
-            if nameOfStudent == inputName {
-                namesOfStudents.remove(at: index)
-                print("\(inputName) 학생을 삭제하였습니다.")
-                break
-            }
-            index += 1
-        }
-        // 이름 목록을 다 찾아봤으나 찾지 못한 경우
-        if index == namesOfStudents.count + 1 {
+        let inputStudent = Student(name: inputName, subjects: [], GPA: 0)
+        
+        // 목록이 비어있으면 바로 종료
+        if students.count == 0 {
             print("\(inputName) 학생을 찾지 못했습니다.")
+        } else {
+            var index = 0
+            // 목록을 찾아봤으나 이름을 찾지 못한 경우
+            if students.filter({ $0.name == inputName }).isEmpty {
+                print("\(inputName) 학생을 찾지 못했습니다.")
+            } else {
+                // 이름을 찾은 경우 목록을 해당 학생을 제거한 목록으로 갱신
+                students = students.filter { $0.name != inputName }
+                print("\(inputName) 학생을 삭제하였습니다.")
+            }
         }
     }
 }
