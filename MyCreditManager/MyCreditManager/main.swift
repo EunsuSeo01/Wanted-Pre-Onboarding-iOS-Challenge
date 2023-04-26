@@ -41,7 +41,8 @@ while true {
         // 성적추가
         addCourseGrade()
     case "4":
-        print("4: 성적삭제")
+        // 성적삭제
+        removeCourseGrade()
     case "5":
         print("5: 평점보기")
     default:
@@ -129,6 +130,41 @@ public func addCourseGrade() {
             // 해당하는 학생의 과목 성적 정보 추가(변경)
             students[index].courses[courseName] = courseGrade
             print("\(studentName) 학생의 \(courseName) 과목이 \(courseGrade)로 추가(변경)되었습니다.")
+        }
+    }
+}
+
+// 4: 성적삭제
+public func removeCourseGrade() {
+    print("성적을 삭제할 학생의 이름, 과목 이름을 띄어쓰기로 구분하여 차례로 작성해주세요.\n입력예) Mickey Swift")
+    let inputCourse = readLine()!.split(separator: " ")
+    let studentName = String(inputCourse[0])
+    let courseName = String(inputCourse[1])
+    
+    // 잘못된 입력 처리
+    if inputCourse.count != 2 {
+        print("입력이 잘못되었습니다. 다시 확인해주세요.")
+    } else {
+        // 받은 이름의 학생이 목록에 없을 경우
+        if students.filter({ $0.name == studentName }).isEmpty {
+            print("\(studentName) 학생을 찾지 못했습니다.")
+        } else {
+            // 학생이 있는 경우 그 학생의 인덱스를 찾는다
+            var index = 0
+            for student in students {
+                if student.name == studentName {
+                    break
+                }
+                index += 1
+            }
+            // 인풋 과목의 정보가 없는 경우
+            if students[index].courses.filter({ $0.key == courseName }).isEmpty {
+                print("\(studentName) 학생의 \(courseName) 성적은 등록되어 있지 않습니다.")
+            } else {
+                // 과목 정보가 있는 경우 삭제
+                students[index].courses.removeValue(forKey: courseName)
+                print("\(studentName) 학생의 \(courseName) 과목의 성적이 삭제되었습니다.")
+            }
         }
     }
 }
