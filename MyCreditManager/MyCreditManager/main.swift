@@ -44,7 +44,8 @@ while true {
         // 성적삭제
         removeCourseGrade()
     case "5":
-        print("5: 평점보기")
+        // 평점보기
+        showGPA()
     default:
         print("뭔가 입력이 잘못되었습니다. 1~5 사이의 숫자 혹은 X를 입력해주세요.")
     }
@@ -83,13 +84,10 @@ public func removeStudent() {
     if inputName.isEmpty {
         print("입력이 잘못되었습니다. 다시 확인해주세요.")
     } else {
-        let inputStudent = Student(name: inputName, courses: [:], GPA: 0)
-        
         // 목록이 비어있으면 바로 종료
         if students.count == 0 {
             print("\(inputName) 학생을 찾지 못했습니다.")
         } else {
-            var index = 0
             // 목록을 찾아봤으나 이름을 찾지 못한 경우
             if students.filter({ $0.name == inputName }).isEmpty {
                 print("\(inputName) 학생을 찾지 못했습니다.")
@@ -167,4 +165,66 @@ public func removeCourseGrade() {
             }
         }
     }
+}
+
+// 5: 평점보기
+public func showGPA() {
+    print("평점을 알고싶은 학생의 이름을 입력해주세요")
+    let inputName = readLine()!
+    
+    // 잘못된 입력 처리
+    if inputName.isEmpty {
+        print("입력이 잘못되었습니다. 다시 확인해주세요.")
+    } else {
+        // 입력받은 이름의 학생이 없는 경우
+        if students.filter({ $0.name == inputName }).isEmpty {
+            print("\(inputName) 학생을 찾지 못했습니다.")
+        } else {
+            let student = students.filter({ $0.name == inputName }).first
+            // 학생의 성적이 없는 경우
+            if student!.courses.isEmpty {
+                print("\(inputName) 학생의 등록된 성적이 없습니다.")
+            } else {
+                // 과목과 성적을 모두 출력한 후 마지막 줄에 평점 출력
+                student!.courses.forEach { (key: String, value: String) in
+                    print("\(key): \(value)")
+                }
+                print(calculateGPA(student!))
+            }
+        }
+    }
+}
+
+// 학생의 평점 계산
+private func calculateGPA(_ student: Student) -> String {
+    let grades = student.courses.values
+    let count = grades.count
+    var sum: Double = 0
+    
+    for grade in grades {
+        // 성적별 점수에 맞게 총합 계산
+        switch grade {
+        case "A+":
+            sum += 4.5
+        case "A":
+            sum += 4
+        case "B+":
+            sum += 3.5
+        case "B":
+            sum += 3
+        case "C+":
+            sum += 2.5
+        case "C":
+            sum += 2
+        case "D+":
+            sum += 1.5
+        case "D":
+            sum += 1
+        default:
+            break
+        }
+    }
+    
+    // 최대 소수점 2번째 자리까지 출력
+    return String(round((sum / Double(count)) * 100) / 100)
 }
